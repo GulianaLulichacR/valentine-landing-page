@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Heart, Gift } from 'lucide-react';
-import CheckoutModal, { CheckoutFormData } from './CheckoutModal';
+import CheckoutModalWithTerms, { CheckoutFormData } from './CheckoutModalWithTerms';
 import { openWhatsApp } from '@/lib/whatsapp';
 
 /**
@@ -122,7 +122,7 @@ export default function ProductCard({
       </div>
 
       {/* Checkout Modal */}
-      <CheckoutModal
+      <CheckoutModalWithTerms
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
         productName={title}

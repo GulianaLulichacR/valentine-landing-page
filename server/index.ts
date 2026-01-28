@@ -1,33 +1,118 @@
 import express from "express";
-import { createServer } from "http";
-import path from "path";
-import { fileURLToPath } from "url";
+import { createOrder, logAudit, getOrderById, getAllOrders } from "./db";
+import * as schema from "../drizzle/schema";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const app = express();
+app.use(express.json());
 
-async function startServer() {
-  const app = express();
-  const server = createServer(app);
+// Rutas para gestión de pedidos
+app.post("/api/orders", async (req, res) => {
+  try {
+    const {
+      productId,
+      productName,
+      productPrice,
+      senderName,
+      senderEmail,
+      senderPhone,
+      recipientName,
+      message,
+      deliveryDate,
+      termsAccepted,
+      noRefundPolicy,
+    } = req.body;
 
-  // Serve static files from dist/public in production
-  const staticPath =
-    process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "public")
-      : path.resolve(__dirname, "..", "dist", "public");
+    // Validaciones
+    if (!senderName || !recipientName || !deliveryDate || !termsAccepted) {
+      return res.status(400).json({
+        error: "Faltan campos requeridos",
+      });
+    }
 
-  app.use(express.static(staticPath));
+    if (!termsAccepted || !noRefundPolicy) {
+      return res.status(400).json({
+        error: "Debes aceptar los términos y condiciones",
+      });
+    }
 
-  // Handle client-side routing - serve index.html for all routes
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticPath, "index.html"));
-  });
+    // Crear pedido
+    const orderData: schema.InsertOrder = {
+      productId,
+      productName,
+      productPrice: productPrice.toString(),
+      senderName,
+      senderEmail,
+      senderPhone,
+      recipientName,
+      message,
+      deliveryDate,
+      termsAccepted: termsAccepted ? 1 : 0,
+      noRefundPolicy: noRefundPolicy ? 1 : 0,
+      minDeliveryDays: 2,
+      paymentStatus: "pending",
+      orderStatus: "pending",
+    };
 
-  const port = process.env.PORT || 3000;
+    const result = await createOrder(orderData);
 
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
-  });
-}
+    // Registrar en auditoría
+    await logAudit({
+      action: "ORDER_CREATED",
+      entityType: "order",
+      entityId: result.insertId,
+      changes: JSON.stringify(orderData),
+      ipAddress: req.ip,
+      userAgent: req.get("user-agent"),
+    });
 
-startServer().catch(console.error);
+    res.status(201).json({
+      success: true,
+      orderId: result.insertId,
+      message: "Pedido creado exitosamente",
+    });
+  } catch (error) {
+    console.error("[Orders] Error creating order:", error);
+    res.status(500).json({
+      error: "Error al crear el pedido",
+    });
+  }
+});
+
+// Obtener todos los pedidos (solo admin)
+app.get("/api/orders", async (req, res) => {
+  try {
+    const orders = await getAllOrders();
+    res.json(orders);
+  } catch (error) {
+    console.error("[Orders] Error fetching orders:", error);
+    res.status(500).json({
+      error: "Error al obtener los pedidos",
+    });
+  }
+});
+
+// Obtener un pedido específico
+app.get("/api/orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await getOrderById(parseInt(id));
+
+    if (!order) {
+      return res.status(404).json({
+        error: "Pedido no encontrado",
+      });
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error("[Orders] Error fetching order:", error);
+    res.status(500).json({
+      error: "Error al obtener el pedido",
+    });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

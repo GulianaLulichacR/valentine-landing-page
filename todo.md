@@ -22,11 +22,15 @@
 - [ ] Implementar autenticación de admin
 - [ ] Agregar validaciones de formulario
 
-## Phase 4: Landing Page Integration
-- [ ] Cargar productos dinámicamente desde la BD
-- [ ] Mostrar estado de stock (Agotado/Disponible)
-- [ ] Integrar modal de checkout en cards de productos
-- [ ] Actualizar carrusel con productos destacados
+## Phase 4: Sistema de Gestión de Pedidos (Completed)
+- [x] Actualizar schema de base de datos con tabla de pedidos
+- [x] Crear procedimientos tRPC para guardar pedidos
+- [x] Implementar modal con términos y condiciones
+- [x] Agregar validaciones de seguridad
+- [x] Integrar almacenamiento en backend
+- [x] Crear panel de administración para ver pedidos
+- [x] Implementar confirmación de pago (2 días mínimo)
+- [x] Agregar política de no devolución
 
 ## Phase 5: Testing & Optimization
 - [ ] Escribir tests para procedimientos tRPC
