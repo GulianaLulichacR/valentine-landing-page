@@ -8,6 +8,13 @@
       "when": 1769641184074,
       "tag": "0000_overrated_hawkeye",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769779094284,
+      "tag": "0001_fearless_caretaker",
+      "breakpoints": true
     }
   ]
 }

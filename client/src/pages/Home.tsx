@@ -3,6 +3,7 @@ import CollectionSection from '@/components/CollectionSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import CTASection from '@/components/CTASection';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import Navbar from '@/components/Navbar';
 
 /**
  * Home Page - Valentine's Day Landing Page
@@ -68,6 +69,7 @@ const products = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
+      <Navbar />
       {/* Hero Carousel */}
       <HeroCarousel />
 

@@ -6,10 +6,12 @@ import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, json } f
  */
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
-  email: varchar("email", { length: 255 }).unique(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
   name: varchar("name", { length: 255 }),
   phone: varchar("phone", { length: 20 }),
+  passwordHash: varchar("passwordHash", { length: 255 }),
   role: mysqlEnum("role", ["customer", "admin"]).default("customer"),
+  lastLogin: timestamp("lastLogin"),
   createdAt: timestamp("createdAt").defaultNow(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow(),
 });
