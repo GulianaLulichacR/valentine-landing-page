@@ -1,9 +1,13 @@
 import express from "express";
 import { createOrder, logAudit, getOrderById, getAllOrders } from "./db";
 import * as schema from "../drizzle/schema";
+import authRoutes from "./auth-routes";
 
 const app = express();
 app.use(express.json());
+
+// Registrar rutas de autenticación
+app.use("/api/auth", authRoutes);
 
 // Rutas para gestión de pedidos
 app.post("/api/orders", async (req, res) => {
@@ -114,5 +118,6 @@ app.get("/api/orders/:id", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`[Server] Running on port ${PORT}`);
+  console.log(`[Server] Auth routes registered at /api/auth`);
 });
