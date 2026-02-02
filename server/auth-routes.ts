@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { getDb } from './db';
-import { users } from '../drizzle/schema';
+import { admins } from '../drizzle/schema';
 import { eq } from 'drizzle-orm';
 import { hashPassword, verifyPassword, generateToken, verifyToken } from './auth';
 
@@ -41,11 +41,11 @@ export const adminMiddleware = async (req: Request, res: Response, next: Functio
   
   const dbUser = await db
     .select()
-    .from(users)
-    .where(eq(users.id, user.userId))
+    .from(admins)
+    .where(eq(admins.id, user.userId))
     .limit(1);
   
-  if (!dbUser[0] || dbUser[0].role !== 'admin') {
+  if (!dbUser[0]) {
     return res.status(403).json({ error: 'No tienes permisos de administrador' });
   }
   
@@ -72,8 +72,7 @@ router.post('/register', async (req: Request, res: Response) => {
     // Verificar si ya existe un admin
     const existingAdmins = await db
       .select()
-      .from(users)
-      .where(eq(users.role, 'admin'));
+      .from(admins);
     
     if (existingAdmins.length > 0) {
       return res.status(403).json({ error: 'Ya existe un administrador registrado' });
@@ -82,8 +81,8 @@ router.post('/register', async (req: Request, res: Response) => {
     // Verificar si el email ya existe
     const existingUser = await db
       .select()
-      .from(users)
-      .where(eq(users.email, email))
+      .from(admins)
+      .where(eq(admins.email, email))
       .limit(1);
     
     if (existingUser.length > 0) {
@@ -92,11 +91,10 @@ router.post('/register', async (req: Request, res: Response) => {
     
     // Crear admin
     const passwordHash = hashPassword(password);
-    const result = await db.insert(users).values({
+    const result = await db.insert(admins).values({
       email,
       name: name || 'Administrador',
       passwordHash,
-      role: 'admin',
     });
     
     res.status(201).json({
@@ -116,6 +114,7 @@ router.post('/register', async (req: Request, res: Response) => {
 router.post('/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+    console.log('[Auth] Login attempt for email:', email);
     
     if (!email || !password) {
       return res.status(400).json({ error: 'Email y contraseña son requeridos' });
@@ -123,28 +122,30 @@ router.post('/login', async (req: Request, res: Response) => {
     
     const db = await getDb();
     if (!db) {
+      console.error('[Auth] Database not available');
       return res.status(500).json({ error: 'Base de datos no disponible' });
     }
     
     // Buscar usuario
+    console.log('[Auth] Searching for admin with email:', email);
     const dbUser = await db
       .select()
-      .from(users)
-      .where(eq(users.email, email))
+      .from(admins)
+      .where(eq(admins.email, email))
       .limit(1);
     
+    console.log('[Auth] User found:', dbUser.length > 0 ? 'Yes' : 'No');
     if (!dbUser[0]) {
+      console.log('[Auth] User not found');
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
     
     // Verificar contraseña
-    if (!dbUser[0].passwordHash || !verifyPassword(password, dbUser[0].passwordHash)) {
+    console.log('[Auth] Verifying password...');
+    const isPasswordValid = verifyPassword(password, dbUser[0].passwordHash);
+    console.log('[Auth] Password valid:', isPasswordValid);
+    if (!dbUser[0].passwordHash || !isPasswordValid) {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
-    }
-    
-    // Verificar que sea admin
-    if (dbUser[0].role !== 'admin') {
-      return res.status(403).json({ error: 'Solo administradores pueden acceder' });
     }
     
     // Generar token
@@ -152,9 +153,9 @@ router.post('/login', async (req: Request, res: Response) => {
     
     // Actualizar último login
     await db
-      .update(users)
+      .update(admins)
       .set({ lastLogin: new Date() })
-      .where(eq(users.id, dbUser[0].id));
+      .where(eq(admins.id, dbUser[0].id));
     
     res.json({
       success: true,
@@ -186,8 +187,8 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
     
     const dbUser = await db
       .select()
-      .from(users)
-      .where(eq(users.id, user.userId))
+      .from(admins)
+      .where(eq(admins.id, user.userId))
       .limit(1);
     
     if (!dbUser[0]) {

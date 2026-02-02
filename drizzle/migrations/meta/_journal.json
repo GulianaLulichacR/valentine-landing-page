@@ -15,6 +15,13 @@
       "when": 1769779094284,
       "tag": "0001_fearless_caretaker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769954871457,
+      "tag": "0002_slow_domino",
+      "breakpoints": true
     }
   ]
 }

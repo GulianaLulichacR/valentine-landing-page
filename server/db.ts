@@ -1,17 +1,22 @@
-import { createConnection } from "mysql2/promise";
+import { createPool } from "mysql2/promise";
 import { drizzle } from "drizzle-orm/mysql2";
 import { eq } from "drizzle-orm";
 import * as schema from "../drizzle/schema";
 
 let db: any = null;
+let pool: any = null;
 
 export async function getDb() {
   if (!db && process.env.DATABASE_URL) {
     try {
-      const connection = await createConnection(process.env.DATABASE_URL);
-      db = drizzle(connection, { schema, mode: "default" });
+      // Crear un pool de conexiones en lugar de una conexión única
+      pool = createPool(process.env.DATABASE_URL);
+      db = drizzle(pool, { schema, mode: "default" });
+      console.log("[Database] Pool created successfully");
     } catch (error) {
       console.error("[Database] Connection failed:", error);
+      db = null;
+      pool = null;
       throw error;
     }
   }
