@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import HeroCarousel from '@/components/HeroCarousel';
 import CollectionSection from '@/components/CollectionSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -18,12 +19,12 @@ import Navbar from '@/components/Navbar';
  * - Subtle animations and micro-interactions
  */
 
-const products = [
+const defaultProducts = [
   {
     id: '1',
     title: 'Rosas Premium Rojas',
     image: '/images/hero-carousel-1.jpg',
-    price: '$89.99',
+    price: 'S/. 89.99',
     badge: 'best-seller' as const,
     complements: ['Trufas Belgas', 'Peluche de Lujo', 'Carta Manuscrita', 'Globos Decorativos']
   },
@@ -31,7 +32,7 @@ const products = [
     id: '2',
     title: 'Arreglo Floral Romántico',
     image: '/images/product-collection-hero.jpg',
-    price: '$129.99',
+    price: 'S/. 129.99',
     badge: 'limited-edition' as const,
     complements: ['Chocolates Premium', 'Peluche Blanco', 'Tarjeta Personalizada', 'Cinta de Seda']
   },
@@ -39,21 +40,21 @@ const products = [
     id: '3',
     title: 'Ramo Mixto Elegante',
     image: '/images/complementos-detail.jpg',
-    price: '$99.99',
+    price: 'S/. 99.99',
     complements: ['Trufas Gourmet', 'Peluche Mediano', 'Carta de Amor', 'Papel de Seda']
   },
   {
     id: '4',
     title: 'Rosas Blancas Sofisticadas',
     image: '/images/hero-carousel-2.jpg',
-    price: '$109.99',
+    price: 'S/. 109.99',
     complements: ['Chocolates Artesanales', 'Peluche Premium', 'Sobre Decorado', 'Cinta Dorada']
   },
   {
     id: '5',
     title: 'Arreglo Floral Pasional',
     image: '/images/hero-carousel-1.jpg',
-    price: '$149.99',
+    price: 'S/. 149.99',
     badge: 'limited-edition' as const,
     complements: ['Bombones Franceses', 'Peluche Gigante', 'Tarjeta Manuscrita', 'Globos de Helio']
   },
@@ -61,20 +62,52 @@ const products = [
     id: '6',
     title: 'Ramo Delicado Romántico',
     image: '/images/product-collection-hero.jpg',
-    price: '$119.99',
+    price: 'S/. 119.99',
     complements: ['Trufas Suizas', 'Peluche Pequeño', 'Carta Personalizada', 'Cinta de Terciopelo']
   }
 ];
 
 export default function Home() {
+  const [products, setProducts] = useState(defaultProducts);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        // Transformar datos de la API al formato esperado
+        const transformedProducts = data.map((p: any) => ({
+          id: p.id.toString(),
+          title: p.name,
+          image: p.imageUrl || '/images/hero-carousel-1.jpg',
+          price: `S/. ${p.price}`,
+          complements: Array.isArray(p.complements) ? p.complements : [],
+          badge: p.featured === 1 ? 'best-seller' : undefined,
+        }));
+        setProducts(transformedProducts);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setProducts(defaultProducts);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
+      
       {/* Hero Carousel */}
       <HeroCarousel />
 
       {/* Collection Section */}
-      <CollectionSection products={products} />
+      {!loading && <CollectionSection products={products} />}
 
       {/* Features Section */}
       <FeaturesSection />
@@ -84,6 +117,8 @@ export default function Home() {
 
       {/* WhatsApp Button */}
       <WhatsAppButton />
+      
+      {loading && <div className="text-center py-8">Cargando productos...</div>}
     </div>
   );
 }

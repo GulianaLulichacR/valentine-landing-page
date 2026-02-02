@@ -48,7 +48,7 @@ export default function AdminProducts() {
       const token = localStorage.getItem('adminToken');
       if (!token) return;
 
-      const response = await fetch('/api/admin/products', {
+      const response = await fetch('/api/products', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -83,8 +83,8 @@ export default function AdminProducts() {
       if (!token) return;
 
       const endpoint = editingId 
-        ? `/api/admin/products/${editingId}`
-        : '/api/admin/products';
+        ? `/api/products/${editingId}`
+        : '/api/products';
 
       const method = editingId ? 'PUT' : 'POST';
 
@@ -130,7 +130,7 @@ export default function AdminProducts() {
       const token = localStorage.getItem('adminToken');
       if (!token) return;
 
-      const response = await fetch(`/api/admin/products/${id}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
