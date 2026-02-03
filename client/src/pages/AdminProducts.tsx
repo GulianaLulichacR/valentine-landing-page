@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Plus, Edit2, Trash2, Loader2, AlertCircle, Search } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import ImageUpload from '@/components/ImageUpload';
 
 interface Product {
   id: number;
@@ -28,6 +29,7 @@ export default function AdminProducts() {
     stock: '',
     category: 'San Valentin',
     featured: false,
+    imageUrl: '',
   });
 
   useEffect(() => {
@@ -99,6 +101,7 @@ export default function AdminProducts() {
           price: parseFloat(formData.price),
           stock: parseInt(formData.stock),
           featured: formData.featured ? 1 : 0,
+          imageUrl: formData.imageUrl || '/images/hero-carousel-1.jpg',
         }),
       });
 
@@ -116,6 +119,7 @@ export default function AdminProducts() {
         stock: '',
         category: 'San Valentin',
         featured: false,
+        imageUrl: '',
       });
     } catch (err) {
       console.error('Error saving product:', err);
@@ -156,6 +160,7 @@ export default function AdminProducts() {
       stock: product.stock.toString(),
       category: product.category,
       featured: product.featured === 1,
+      imageUrl: product.imageUrl || '',
     });
     setEditingId(product.id);
     setShowForm(true);
@@ -193,6 +198,7 @@ export default function AdminProducts() {
                 stock: '',
                 category: 'San Valentin',
                 featured: false,
+                imageUrl: '',
               });
             }}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
@@ -236,6 +242,10 @@ export default function AdminProducts() {
                   required
                 />
               </div>
+              <ImageUpload
+                onImageUpload={(url) => setFormData({ ...formData, imageUrl: url })}
+                currentImage={formData.imageUrl}
+              />
               <textarea
                 placeholder="Descripción"
                 value={formData.description}

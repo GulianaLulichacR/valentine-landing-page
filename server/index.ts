@@ -3,15 +3,21 @@ import { createOrder, logAudit, getOrderById, getAllOrders } from "./db";
 import * as schema from "../drizzle/schema";
 import authRoutes from "./auth-routes";
 import productsRoutes from "./products-routes";
+import uploadRoutes from "./upload-routes";
+import fileUpload from "express-fileupload";
 
 const app = express();
 app.use(express.json());
+app.use(fileUpload());
 
 // Registrar rutas de autenticación
 app.use("/api/auth", authRoutes);
 
 // Registrar rutas de productos
 app.use("/api/products", productsRoutes);
+
+// Registrar rutas de upload
+app.use("/api/upload", uploadRoutes);
 
 // Rutas para gestión de pedidos
 app.post("/api/orders", async (req, res) => {
