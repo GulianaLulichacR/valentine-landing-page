@@ -4,6 +4,7 @@ import * as schema from "../drizzle/schema";
 import authRoutes from "./auth-routes";
 import productsRoutes from "./products-routes";
 import uploadRoutes from "./upload-routes";
+import statsRoutes from "./stats-routes";
 import fileUpload from "express-fileupload";
 
 const app = express();
@@ -18,6 +19,9 @@ app.use("/api/products", productsRoutes);
 
 // Registrar rutas de upload
 app.use("/api/upload", uploadRoutes);
+
+// Registrar rutas de estadísticas
+app.use("/api/stats", statsRoutes);
 
 // Rutas para gestión de pedidos
 app.post("/api/orders", async (req, res) => {
