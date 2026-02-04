@@ -6,10 +6,20 @@ import productsRoutes from "./products-routes";
 import uploadRoutes from "./upload-routes";
 import statsRoutes from "./stats-routes";
 import fileUpload from "express-fileupload";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 app.use(express.json());
 app.use(fileUpload());
+
+// Servir archivos estáticos de uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Registrar rutas de autenticación
 app.use("/api/auth", authRoutes);
@@ -134,4 +144,5 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`[Server] Running on port ${PORT}`);
   console.log(`[Server] Auth routes registered at /api/auth`);
+  console.log(`[Server] Static uploads served at /uploads`);
 });

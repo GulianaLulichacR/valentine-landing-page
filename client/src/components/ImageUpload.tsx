@@ -57,17 +57,28 @@ export default function ImageUpload({ onImageUpload, currentImage }: ImageUpload
       const formData = new FormData();
       formData.append('image', file);
 
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No estás autenticado. Por favor inicia sesión.');
+      }
+
       const response = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData,
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Error al subir la imagen');
+        let errorMessage = 'Error al subir la imagen';
+        try {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } catch (e) {
+          errorMessage = `Error ${response.status}: ${response.statusText}`;
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

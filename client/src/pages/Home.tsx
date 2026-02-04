@@ -23,7 +23,7 @@ const defaultProducts = [
   {
     id: '1',
     title: 'Rosas Premium Rojas',
-    image: '/images/hero-carousel-1.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
     price: 'S/. 89.99',
     badge: 'best-seller' as const,
     complements: ['Trufas Belgas', 'Peluche de Lujo', 'Carta Manuscrita', 'Globos Decorativos']
@@ -31,7 +31,7 @@ const defaultProducts = [
   {
     id: '2',
     title: 'Arreglo Floral Romántico',
-    image: '/images/product-collection-hero.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/XNQuAftRgmyTXNre.jpg',
     price: 'S/. 129.99',
     badge: 'limited-edition' as const,
     complements: ['Chocolates Premium', 'Peluche Blanco', 'Tarjeta Personalizada', 'Cinta de Seda']
@@ -39,21 +39,21 @@ const defaultProducts = [
   {
     id: '3',
     title: 'Ramo Mixto Elegante',
-    image: '/images/complementos-detail.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/DUbQRMNVyfIwobBi.jpg',
     price: 'S/. 99.99',
     complements: ['Trufas Gourmet', 'Peluche Mediano', 'Carta de Amor', 'Papel de Seda']
   },
   {
     id: '4',
     title: 'Rosas Blancas Sofisticadas',
-    image: '/images/hero-carousel-2.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/kAAuZMNUooUnnysS.jpg',
     price: 'S/. 109.99',
     complements: ['Chocolates Artesanales', 'Peluche Premium', 'Sobre Decorado', 'Cinta Dorada']
   },
   {
     id: '5',
     title: 'Arreglo Floral Pasional',
-    image: '/images/hero-carousel-1.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
     price: 'S/. 149.99',
     badge: 'limited-edition' as const,
     complements: ['Bombones Franceses', 'Peluche Gigante', 'Tarjeta Manuscrita', 'Globos de Helio']
@@ -61,7 +61,7 @@ const defaultProducts = [
   {
     id: '6',
     title: 'Ramo Delicado Romántico',
-    image: '/images/product-collection-hero.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/XNQuAftRgmyTXNre.jpg',
     price: 'S/. 119.99',
     complements: ['Trufas Suizas', 'Peluche Pequeño', 'Carta Personalizada', 'Cinta de Terciopelo']
   }

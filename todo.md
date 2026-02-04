@@ -35,14 +35,21 @@
 - [x] Implementar confirmación de pago (2 días mínimo)
 - [x] Agregar política de no devolución
 
-## Phase 5: Testing & Optimization
+## Phase 5: Image Upload System (Completed)
+- [x] Implementar carga de imágenes local en lugar de AWS S3
+- [x] Crear directorio de almacenamiento para imágenes
+- [x] Configurar rutas de servidor para servir imágenes estáticas
+- [x] Actualizar componente ImageUpload para usar almacenamiento local
+- [x] Pruebas de carga de imágenes
+
+## Phase 6: Testing & Optimization
 - [ ] Escribir tests para procedimientos tRPC
 - [ ] Escribir tests para componentes
 - [ ] Optimizar rendimiento
 - [ ] Validar responsive design
 - [ ] Pruebas de flujo completo
 
-## Phase 6: Deployment
+## Phase 7: Deployment
 - [ ] Crear checkpoint final
 - [ ] Documentar instrucciones de uso
 - [ ] Preparar para publicación

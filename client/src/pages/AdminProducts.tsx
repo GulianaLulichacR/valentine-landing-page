@@ -101,7 +101,7 @@ export default function AdminProducts() {
           price: parseFloat(formData.price),
           stock: parseInt(formData.stock),
           featured: formData.featured ? 1 : 0,
-          imageUrl: formData.imageUrl || '/images/hero-carousel-1.jpg',
+          imageUrl: formData.imageUrl || 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
         }),
       });
 

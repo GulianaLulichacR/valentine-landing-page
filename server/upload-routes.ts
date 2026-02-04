@@ -1,25 +1,28 @@
 import express, { Router, Request, Response } from 'express';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { UploadedFile } from 'express-fileupload';
 import { authMiddleware } from './auth-middleware';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
 const router = Router();
 
-// Initialize S3 client
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-  },
-});
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET || 'valentine-products';
+// Define upload directory
+const uploadDir = path.join(__dirname, 'uploads', 'products');
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 /**
  * POST /api/upload/image
- * Upload a product image to S3
+ * Upload a product image locally
  * Returns: { url: string, key: string }
  */
 router.post('/image', authMiddleware, async (req: any, res: Response) => {
@@ -44,25 +47,18 @@ router.post('/image', authMiddleware, async (req: any, res: Response) => {
 
     // Generate unique filename
     const fileExtension = file.name.split('.').pop();
-    const uniqueFileName = `products/${uuidv4()}.${fileExtension}`;
+    const uniqueFileName = `${uuidv4()}.${fileExtension}`;
+    const filePath = path.join(uploadDir, uniqueFileName);
 
-    // Upload to S3
-    const uploadCommand = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: uniqueFileName,
-      Body: file.data,
-      ContentType: file.mimetype,
-      ACL: 'public-read',
-    });
+    // Save file to disk
+    await file.mv(filePath);
 
-    await s3Client.send(uploadCommand);
-
-    // Generate S3 URL
-    const s3Url = `https://${BUCKET_NAME}.s3.amazonaws.com/${uniqueFileName}`;
+    // Generate accessible URL (relative path for serving)
+    const fileUrl = `/uploads/products/${uniqueFileName}`;
 
     res.json({
       success: true,
-      url: s3Url,
+      url: fileUrl,
       key: uniqueFileName,
     });
   } catch (error) {

@@ -15,14 +15,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 const slides = [
   {
     id: 1,
-    image: '/images/hero-carousel-1.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
     title: 'Regala Amor',
     subtitle: 'Rosas Premium de Lujo',
     description: 'Arreglos florales exclusivos que expresan tus sentimientos'
   },
   {
     id: 2,
-    image: '/images/hero-carousel-2.jpg',
+    image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/kAAuZMNUooUnnysS.jpg',
     title: 'Regala Amor',
     subtitle: 'Momentos Inolvidables',
     description: 'Sorprende a quien amas con nuestros regalos exclusivos'
