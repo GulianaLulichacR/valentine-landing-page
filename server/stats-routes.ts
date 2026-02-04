@@ -44,7 +44,7 @@ router.get('/overview', async (req: Request, res: Response) => {
 
     // Pedidos pendientes
     const pendingOrdersResult = await db.execute(
-      sql`SELECT COUNT(*) as count FROM orders WHERE status = 'pending'`
+      sql`SELECT COUNT(*) as count FROM orders WHERE orderStatus = 'pending'`
     );
     const pendingOrders = (pendingOrdersResult as any)[0]?.count || 0;
 
@@ -139,15 +139,15 @@ router.get('/orders-status', async (req: Request, res: Response) => {
     const result = await db.execute(
       sql`
         SELECT 
-          status,
+          orderStatus,
           COUNT(*) as count
         FROM orders
-        GROUP BY status
+        GROUP BY orderStatus
       `
     );
 
     const data = (result as any).map((row: any) => ({
-      name: row.status || 'unknown',
+      name: row.orderStatus || 'unknown',
       value: row.count || 0,
     }));
 
@@ -173,7 +173,7 @@ router.get('/recent-orders', async (req: Request, res: Response) => {
           productName,
           senderName,
           CAST(productPrice AS DECIMAL(10,2)) as productPrice,
-          status,
+          orderStatus,
           createdAt
         FROM orders
         ORDER BY createdAt DESC
@@ -186,7 +186,7 @@ router.get('/recent-orders', async (req: Request, res: Response) => {
       productName: row.productName,
       senderName: row.senderName,
       price: parseFloat(row.productPrice || 0),
-      status: row.status || 'pending',
+      status: row.orderStatus || 'pending',
       date: row.createdAt ? new Date(row.createdAt).toLocaleDateString('es-ES') : 'N/A',
     }));
 

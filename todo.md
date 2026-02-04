@@ -42,14 +42,18 @@
 - [x] Actualizar componente ImageUpload para usar almacenamiento local
 - [x] Pruebas de carga de imágenes
 
-## Phase 6: Testing & Optimization
+## Phase 6: Bug Fixes & Corrections (Completed)
+- [x] Corregir referencias a columnas de estado en estadísticas (status -> orderStatus)
+- [x] Validar que todas las rutas de estadísticas funcionen correctamente
+
+## Phase 7: Testing & Optimization
 - [ ] Escribir tests para procedimientos tRPC
 - [ ] Escribir tests para componentes
 - [ ] Optimizar rendimiento
 - [ ] Validar responsive design
 - [ ] Pruebas de flujo completo
 
-## Phase 7: Deployment
+## Phase 8: Deployment
 - [ ] Crear checkpoint final
 - [ ] Documentar instrucciones de uso
 - [ ] Preparar para publicación
