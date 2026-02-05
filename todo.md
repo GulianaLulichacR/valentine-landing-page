@@ -47,6 +47,8 @@
 - [x] Validar que todas las rutas de estadísticas funcionen correctamente
 - [x] Corregir error en AdminDashboard (totalRevenue -> totalSales)
 - [x] Agregar fallback para valores undefined en cálculos numéricos
+- [x] Registrar rutas de administración en server/index.ts
+- [x] Verificar que /api/admin/orders está disponible
 
 ## Phase 7: Testing & Optimization
 - [ ] Escribir tests para procedimientos tRPC
