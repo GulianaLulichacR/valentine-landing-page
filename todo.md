@@ -45,6 +45,8 @@
 ## Phase 6: Bug Fixes & Corrections (Completed)
 - [x] Corregir referencias a columnas de estado en estadísticas (status -> orderStatus)
 - [x] Validar que todas las rutas de estadísticas funcionen correctamente
+- [x] Corregir error en AdminDashboard (totalRevenue -> totalSales)
+- [x] Agregar fallback para valores undefined en cálculos numéricos
 
 ## Phase 7: Testing & Optimization
 - [ ] Escribir tests para procedimientos tRPC

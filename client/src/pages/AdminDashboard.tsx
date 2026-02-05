@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 interface DashboardStats {
   totalProducts: number;
   totalOrders: number;
-  totalRevenue: number;
+  totalSales: number;
   pendingOrders: number;
 }
 
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-600 text-sm font-semibold">Ingresos</p>
-                    <p className="text-3xl font-bold text-gray-900 mt-2">S/. {stats.totalRevenue.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-gray-900 mt-2">S/. {(stats.totalSales || 0).toFixed(2)}</p>
                   </div>
                   <TrendingUp className="text-red-500" size={40} />
                 </div>
