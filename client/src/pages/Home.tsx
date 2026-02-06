@@ -90,6 +90,7 @@ export default function Home() {
         const transformedProducts = data.map((p: any) => ({
           id: p.id.toString(),
           title: p.name,
+          description: p.description || '',
           image: p.imageUrl || '/images/hero-carousel-1.jpg',
           price: `S/. ${p.price}`,
           complements: Array.isArray(p.complements) ? p.complements : [],

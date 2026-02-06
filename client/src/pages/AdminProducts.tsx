@@ -332,6 +332,7 @@ export default function AdminProducts() {
             <table className="w-full">
               <thead className="bg-gray-100 border-b-2 border-gray-200">
                 <tr>
+                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Imagen</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Nombre</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Precio</th>
                   <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Stock</th>
@@ -342,6 +343,13 @@ export default function AdminProducts() {
               <tbody>
                 {filteredProducts.map((product) => (
                   <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm">
+                      {product.imageUrl ? (
+                        <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded" />
+                      ) : (
+                        <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Sin imagen</div>
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{product.name}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">S/. {parseFloat(product.price).toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">

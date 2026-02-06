@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Heart, Gift } from 'lucide-react';
 import CheckoutModalWithTerms, { CheckoutFormData } from './CheckoutModalWithTerms';
 import { openWhatsApp } from '@/lib/whatsapp';
@@ -14,8 +14,8 @@ import { openWhatsApp } from '@/lib/whatsapp';
  * - "Best Seller" or "Limited Edition" floating badges
  * - Smooth 300ms transitions
  * - Improved image handling with fallback
- * - Enhanced description visibility
- * - Decorative flower emoji support
+ * - Enhanced description visibility (read-only)
+ * - Decorative flower emoji in description
  */
 
 interface ProductCardProps {
@@ -43,9 +43,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [descriptionText, setDescriptionText] = useState(description);
   const [imageError, setImageError] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const badgeText = {
     'best-seller': '⭐ Best Seller',
@@ -59,37 +57,6 @@ export default function ProductCard({
   // Manejo de error de imagen con fallback
   const handleImageError = () => {
     setImageError(true);
-  };
-
-  // Lógica mágica: Enter = Flor 🌸
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-
-      const textarea = e.currentTarget;
-      const cursorStart = textarea.selectionStart;
-      const cursorEnd = textarea.selectionEnd;
-      const currentText = descriptionText;
-
-      // Flor decorativa con espacios
-      const flower = ' 🌸 ';
-
-      // Insertamos la flor donde esté el cursor
-      const newText =
-        currentText.substring(0, cursorStart) +
-        flower +
-        currentText.substring(cursorEnd);
-
-      setDescriptionText(newText);
-
-      // Reajustamos la posición del cursor después de la flor
-      setTimeout(() => {
-        if (textareaRef.current) {
-          const newCursorPos = cursorStart + flower.length;
-          textareaRef.current.setSelectionRange(newCursorPos, newCursorPos);
-        }
-      }, 0);
-    }
   };
 
   const displayImage = imageError
@@ -143,32 +110,14 @@ export default function ProductCard({
             </h3>
           </div>
 
-          {/* Descripción mejorada - Siempre visible */}
-          {descriptionText && (
+          {/* Descripción mejorada - Solo lectura */}
+          {description && (
             <div className="py-3 border-t border-b border-pink-100">
               <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover:text-gray-900 transition-colors duration-300">
-                {descriptionText}
+                {description}
               </p>
             </div>
           )}
-
-          {/* Textarea para editar descripción con emoji de flor */}
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
-              Personaliza la descripción (Presiona Enter para 🌸):
-            </label>
-            <textarea
-              ref={textareaRef}
-              value={descriptionText}
-              onChange={(e) => setDescriptionText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Escribe aquí y presiona Enter para agregar una flor..."
-              className="w-full p-3 border-2 border-pink-200 rounded-lg focus:outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-200 text-gray-700 text-sm transition-all resize-none h-24 hover:border-pink-300"
-            />
-            <p className="text-right text-xs text-pink-400 font-medium">
-              💡 Tip: ¡Usa Enter para decorar!
-            </p>
-          </div>
 
           {/* Complements Section - Revealed on Hover */}
           <div
