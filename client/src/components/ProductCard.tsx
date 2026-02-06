@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, Gift } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import CheckoutModalWithTerms, { CheckoutFormData } from './CheckoutModalWithTerms';
 import { openWhatsApp } from '@/lib/whatsapp';
 
@@ -14,8 +14,8 @@ import { openWhatsApp } from '@/lib/whatsapp';
  * - "Best Seller" or "Limited Edition" floating badges
  * - Smooth 300ms transitions
  * - Improved image handling with fallback
- * - Enhanced description visibility (read-only)
- * - Decorative flower emoji in description
+ * - Description displayed below complements
+ * - Emoji-decorated complement list
  */
 
 interface ProductCardProps {
@@ -29,6 +29,9 @@ interface ProductCardProps {
   onAddToCart?: () => void;
   whatsappNumber?: string;
 }
+
+// Emojis para decorar complementos
+const complementEmojis = ['🎁', '💝', '🌹', '✨', '💐', '🎀', '💕', '🌸'];
 
 export default function ProductCard({
   id,
@@ -110,22 +113,13 @@ export default function ProductCard({
             </h3>
           </div>
 
-          {/* Descripción mejorada - Solo lectura */}
-          {description && (
-            <div className="py-3 border-t border-b border-pink-100">
-              <p className="text-gray-700 text-sm leading-relaxed font-medium group-hover:text-gray-900 transition-colors duration-300">
-                {description}
-              </p>
-            </div>
-          )}
-
           {/* Complements Section - Revealed on Hover */}
           <div
             className={`transition-all duration-300 overflow-hidden ${
-              isHovered ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
+              isHovered ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
             }`}
           >
-            <div className="pt-4 border-t border-pink-100 space-y-2">
+            <div className="space-y-3 border-t border-b border-pink-100 py-3">
               <p className="text-sm font-semibold text-foreground/70 uppercase tracking-wide">
                 ✨ Incluye:
               </p>
@@ -135,11 +129,23 @@ export default function ProductCard({
                     key={idx}
                     className="flex items-center gap-2 text-sm text-foreground/80 transform transition-transform duration-300 hover:translate-x-1"
                   >
-                    <Gift size={16} className="text-pink-500 flex-shrink-0" />
+                    <span className="text-lg">{complementEmojis[idx % complementEmojis.length]}</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
+
+              {/* Descripción debajo de complementos */}
+              {description && (
+                <div className="pt-3 border-t border-pink-100 space-y-2">
+                  <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wide">
+                    Descripción:
+                  </p>
+                  <p className="text-sm text-gray-700 leading-relaxed font-medium">
+                    {description}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
