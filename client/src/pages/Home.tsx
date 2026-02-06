@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import HeroCarousel from '@/components/HeroCarousel';
 import CollectionSection from '@/components/CollectionSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -23,6 +23,7 @@ const defaultProducts = [
   {
     id: '1',
     title: 'Rosas Premium Rojas',
+    description: 'Rosas rojas de la más alta calidad, perfectas para expresar tu amor y pasión. Cada pétalo es seleccionado cuidadosamente para garantizar belleza y frescura.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
     price: 'S/. 89.99',
     badge: 'best-seller' as const,
@@ -31,6 +32,7 @@ const defaultProducts = [
   {
     id: '2',
     title: 'Arreglo Floral Romántico',
+    description: 'Un hermoso arreglo que combina rosas, lirios y flores complementarias. Diseñado para crear un ambiente romántico y elegante en cualquier espacio.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/XNQuAftRgmyTXNre.jpg',
     price: 'S/. 129.99',
     badge: 'limited-edition' as const,
@@ -39,6 +41,7 @@ const defaultProducts = [
   {
     id: '3',
     title: 'Ramo Mixto Elegante',
+    description: 'Una mezcla exquisita de flores variadas que crean una composición armoniosa y sofisticada. Perfecto para cualquier ocasión especial.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/DUbQRMNVyfIwobBi.jpg',
     price: 'S/. 99.99',
     complements: ['Trufas Gourmet', 'Peluche Mediano', 'Carta de Amor', 'Papel de Seda']
@@ -46,6 +49,7 @@ const defaultProducts = [
   {
     id: '4',
     title: 'Rosas Blancas Sofisticadas',
+    description: 'Rosas blancas que simbolizan la pureza y la elegancia. Un regalo clásico que nunca pasa de moda para expresar tus sentimientos más profundos.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/kAAuZMNUooUnnysS.jpg',
     price: 'S/. 109.99',
     complements: ['Chocolates Artesanales', 'Peluche Premium', 'Sobre Decorado', 'Cinta Dorada']
@@ -53,6 +57,7 @@ const defaultProducts = [
   {
     id: '5',
     title: 'Arreglo Floral Pasional',
+    description: 'Una composición apasionada de flores rojas y púrpuras que transmiten intensidad y romance. Ideal para los momentos más importantes.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/ejtgptjSpVyoErAv.jpg',
     price: 'S/. 149.99',
     badge: 'limited-edition' as const,
@@ -61,6 +66,7 @@ const defaultProducts = [
   {
     id: '6',
     title: 'Ramo Delicado Romántico',
+    description: 'Un ramo delicado pero impactante que combina flores suaves con toques de color. Perfecto para demostrar tu amor de manera sutil y elegante.',
     image: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663314340523/XNQuAftRgmyTXNre.jpg',
     price: 'S/. 119.99',
     complements: ['Trufas Suizas', 'Peluche Pequeño', 'Carta Personalizada', 'Cinta de Terciopelo']
