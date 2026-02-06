@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { Upload, X, CheckCircle, Loader2 } from 'lucide-react';
-import { CldUploadWidget } from 'next-cloudinary';
 
 interface ImageUploadProps {
   onImageUpload: (url: string, key: string) => void;
@@ -24,10 +23,42 @@ export default function ImageUpload({ onImageUpload, currentImage }: ImageUpload
     );
   }
 
-  const handleUploadSuccess = (result: any) => {
+  const handleFileSelect = useCallback(async (file: File) => {
+    if (!file) return;
+
+    // Validar tamaño
+    if (file.size > 5 * 1024 * 1024) {
+      setError('El archivo es demasiado grande. Máximo 5MB.');
+      return;
+    }
+
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor selecciona un archivo de imagen válido.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const imageUrl = result.info.secure_url;
-      const publicId = result.info.public_id;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      formData.append('cloud_name', cloudName);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al subir la imagen a Cloudinary');
+      }
+
+      const result = await response.json();
+      const imageUrl = result.secure_url;
+      const publicId = result.public_id;
 
       setPreview(imageUrl);
       onImageUpload(imageUrl, publicId);
@@ -40,54 +71,67 @@ export default function ImageUpload({ onImageUpload, currentImage }: ImageUpload
       const errorMessage = err instanceof Error ? err.message : 'Error al procesar la imagen';
       setError(errorMessage);
       console.error('[ImageUpload] Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [cloudName, uploadPreset, onImageUpload]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
     }
   };
 
-  const handleUploadError = (error: any) => {
-    const errorMessage = error?.message || 'Error al subir la imagen';
-    setError(errorMessage);
-    console.error('[ImageUpload] Upload error:', error);
+  const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
   };
 
   return (
     <div className="w-full space-y-4">
-      {/* Cloudinary Upload Widget */}
-      <CldUploadWidget
-        uploadPreset={uploadPreset}
-        onSuccess={handleUploadSuccess}
-        onError={handleUploadError}
-        onOpen={() => setIsLoading(true)}
-        onClose={() => setIsLoading(false)}
+      {/* Manual Upload Input */}
+      <label
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 w-full block cursor-pointer ${
+          isLoading
+            ? 'border-primary bg-primary/5 opacity-50 cursor-not-allowed'
+            : 'border-border bg-muted/30 hover:border-primary/50'
+        }`}
       >
-        {({ open }) => (
-          <button
-            type="button"
-            onClick={() => open()}
-            disabled={isLoading}
-            className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-300 w-full ${
-              isLoading
-                ? 'border-primary bg-primary/5 opacity-50 cursor-not-allowed'
-                : 'border-border bg-muted/30 hover:border-primary/50 cursor-pointer'
-            }`}
-          >
-            <div className="flex flex-col items-center gap-3">
-              {isLoading ? (
-                <Loader2 size={32} className="text-primary animate-spin" />
-              ) : (
-                <Upload size={32} className="text-foreground/50" />
-              )}
-              <div>
-                <p className="font-semibold text-foreground">
-                  {isLoading ? 'Subiendo imagen...' : 'Haz clic para seleccionar imagen'}
-                </p>
-                <p className="text-sm text-foreground/60">
-                  o arrastra la imagen aquí (máx. 5MB)
-                </p>
-              </div>
-            </div>
-          </button>
-        )}
-      </CldUploadWidget>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleInputChange}
+          disabled={isLoading}
+          className="hidden"
+        />
+        <div className="flex flex-col items-center gap-3 pointer-events-none">
+          {isLoading ? (
+            <Loader2 size={32} className="text-primary animate-spin" />
+          ) : (
+            <Upload size={32} className="text-foreground/50" />
+          )}
+          <div>
+            <p className="font-semibold text-foreground">
+              {isLoading ? 'Subiendo imagen...' : 'Haz clic para seleccionar imagen'}
+            </p>
+            <p className="text-sm text-foreground/60">
+              o arrastra la imagen aquí (máx. 5MB)
+            </p>
+          </div>
+        </div>
+      </label>
 
       {/* Preview */}
       {preview && (
