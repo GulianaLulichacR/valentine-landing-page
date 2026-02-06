@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Heart } from 'lucide-react';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+import { AdvancedImage } from '@cloudinary/react';
 import CheckoutModalWithTerms, { CheckoutFormData } from './CheckoutModalWithTerms';
 import { openWhatsApp } from '@/lib/whatsapp';
 
 /**
- * ProductCard Component - Enhanced Version
+ * ProductCard Component - Enhanced Version with Cloudinary Optimization
  * 
  * Design Philosophy: Elegancia Minimalista Moderna con Animaciones
  * - Modern card design with soft shadows and rounded corners
@@ -13,7 +17,7 @@ import { openWhatsApp } from '@/lib/whatsapp';
  * - Reveals complementary items on hover
  * - "Best Seller" or "Limited Edition" floating badges
  * - Smooth 300ms transitions
- * - Improved image handling with fallback
+ * - Cloudinary AdvancedImage for automatic optimization
  * - Description displayed below complements
  * - Emoji-decorated complement list
  */
@@ -48,6 +52,9 @@ export default function ProductCard({
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // Initialize Cloudinary
+  const cld = useMemo(() => new Cloudinary({ cloud: { cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME } }), []);
+
   const badgeText = {
     'best-seller': '⭐ Best Seller',
     'limited-edition': '✨ Edición Limitada'
@@ -57,13 +64,46 @@ export default function ProductCard({
     openWhatsApp(title, price, formData, whatsappNumber);
   };
 
-  // Manejo de error de imagen con fallback
+  // Extract public ID from Cloudinary URL
+  const getPublicIdFromUrl = (url: string): string | null => {
+    try {
+      // Si es una URL de Cloudinary, extraer el public ID
+      if (url.includes('cloudinary.com')) {
+        const match = url.match(/\/upload\/(?:v\d+\/)?([^/]+?)(?:\.[a-z]+)?$/);
+        return match ? match[1] : null;
+      }
+      // Si es un public ID directo
+      return url;
+    } catch {
+      return null;
+    }
+  };
+
+  // Crear imagen optimizada con Cloudinary
+  const optimizedImage = useMemo(() => {
+    const publicId = getPublicIdFromUrl(image);
+    if (!publicId || imageError) {
+      return null;
+    }
+
+    try {
+      return cld
+        .image(publicId)
+        .format('auto') // Optimize delivery by auto-format
+        .quality('auto') // Auto quality
+        .resize(auto().gravity(autoGravity()).width(500).height(500)); // Auto-crop to square
+    } catch {
+      setImageError(true);
+      return null;
+    }
+  }, [image, cld, imageError]);
+
   const handleImageError = () => {
     setImageError(true);
   };
 
   const displayImage = imageError
-    ? 'https://via.placeholder.com/400x300?text=Producto+No+Disponible'
+    ? 'https://via.placeholder.com/500x500?text=Producto+No+Disponible'
     : image;
 
   return (
@@ -85,13 +125,21 @@ export default function ProductCard({
           {/* Overlay oscuro en hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          {/* Imagen con manejo de errores */}
-          <img
-            src={displayImage}
-            alt={title}
-            onError={handleImageError}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
+          {/* Imagen optimizada con Cloudinary */}
+          {optimizedImage ? (
+            <AdvancedImage
+              cldImg={optimizedImage as any}
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          ) : (
+            <img
+              src={displayImage}
+              alt={title}
+              onError={handleImageError}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          )}
 
           {/* Floating Heart Icon con animación */}
           <div className="absolute top-4 left-4 text-primary/30 text-4xl animate-pulse group-hover:text-primary/60 transition-colors duration-300">

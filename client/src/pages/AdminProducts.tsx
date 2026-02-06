@@ -1,6 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'wouter';
 import { Plus, Edit2, Trash2, Loader2, AlertCircle, Search } from 'lucide-react';
+import { Cloudinary } from '@cloudinary/url-gen';
+import { auto } from '@cloudinary/url-gen/actions/resize';
+import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
+import { AdvancedImage } from '@cloudinary/react';
 import Navbar from '@/components/Navbar';
 import ImageUpload from '@/components/ImageUpload';
 
@@ -12,6 +16,58 @@ interface Product {
   category: string;
   featured: number;
   imageUrl?: string;
+}
+
+function CloudinaryImage({ imageUrl, alt }: { imageUrl: string; alt: string }) {
+  const cld = useMemo(() => new Cloudinary({ cloud: { cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME } }), []);
+  const [imageError, setImageError] = useState(false);
+
+  const getPublicIdFromUrl = (url: string): string | null => {
+    try {
+      if (url.includes('cloudinary.com')) {
+        const match = url.match(/\/upload\/(?:v\d+\/)?([^\/]+?)(?:\.[a-z]+)?$/);
+        return match ? match[1] : null;
+      }
+      return url;
+    } catch {
+      return null;
+    }
+  };
+
+  const optimizedImage = useMemo(() => {
+    const publicId = getPublicIdFromUrl(imageUrl);
+    if (!publicId || imageError) return null;
+
+    try {
+      return cld
+        .image(publicId)
+        .format('auto')
+        .quality('auto')
+        .resize(auto().gravity(autoGravity()).width(100).height(100));
+    } catch {
+      setImageError(true);
+      return null;
+    }
+  }, [imageUrl, cld, imageError]);
+
+  if (optimizedImage) {
+    return (
+      <AdvancedImage
+        cldImg={optimizedImage as any}
+        alt={alt}
+        className="h-12 w-12 object-cover rounded"
+      />
+    );
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={alt}
+      onError={() => setImageError(true)}
+      className="h-12 w-12 object-cover rounded"
+    />
+  );
 }
 
 export default function AdminProducts() {
@@ -345,7 +401,7 @@ export default function AdminProducts() {
                   <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm">
                       {product.imageUrl ? (
-                        <img src={product.imageUrl} alt={product.name} className="h-12 w-12 object-cover rounded" />
+                        <CloudinaryImage imageUrl={product.imageUrl} alt={product.name} />
                       ) : (
                         <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">Sin imagen</div>
                       )}
