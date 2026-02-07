@@ -91,3 +91,10 @@
 - [x] Actualizar AdminProducts con CloudinaryImage component
 - [x] Configurar redimensionamiento y auto-quality
 - [x] Agregar fallback para imágenes no disponibles
+
+## Phase 13: ProductCard & Admin Refinement (Completed)
+- [x] Remover descripción del ProductCard para usuarios
+- [x] Mantener solo lista de "Incluye" con emojis
+- [x] Agregar interfaz de edición de complementos en AdminProducts
+- [x] Permitir agregar/eliminar complementos individuales
+- [x] Validar que solo admin puede editar complementos

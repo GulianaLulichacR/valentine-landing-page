@@ -16,6 +16,7 @@ interface Product {
   category: string;
   featured: number;
   imageUrl?: string;
+  complements?: string[];
 }
 
 function CloudinaryImage({ imageUrl, alt }: { imageUrl: string; alt: string }) {
@@ -80,13 +81,14 @@ export default function AdminProducts() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
     price: '',
     stock: '',
     category: 'San Valentin',
     featured: false,
     imageUrl: '',
+    complements: [] as string[],
   });
+  const [complementInput, setComplementInput] = useState('');
 
   useEffect(() => {
     const checkAuth = () => {
@@ -170,12 +172,12 @@ export default function AdminProducts() {
       setEditingId(null);
       setFormData({
         name: '',
-        description: '',
         price: '',
         stock: '',
         category: 'San Valentin',
         featured: false,
         imageUrl: '',
+        complements: [],
       });
     } catch (err) {
       console.error('Error saving product:', err);
@@ -211,12 +213,12 @@ export default function AdminProducts() {
   const handleEdit = (product: Product) => {
     setFormData({
       name: product.name,
-      description: '',
       price: product.price,
       stock: product.stock.toString(),
       category: product.category,
       featured: product.featured === 1,
       imageUrl: product.imageUrl || '',
+      complements: product.complements || [],
     });
     setEditingId(product.id);
     setShowForm(true);
@@ -249,13 +251,14 @@ export default function AdminProducts() {
               setEditingId(null);
               setFormData({
                 name: '',
-                description: '',
                 price: '',
                 stock: '',
                 category: 'San Valentin',
                 featured: false,
                 imageUrl: '',
+                complements: [],
               });
+              setComplementInput('');
             }}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
           >
@@ -302,13 +305,61 @@ export default function AdminProducts() {
                 onImageUpload={(url) => setFormData({ ...formData, imageUrl: url })}
                 currentImage={formData.imageUrl}
               />
-              <textarea
-                placeholder="Descripción"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
-                rows={3}
-              />
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Incluye (Complementos)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Agregar complemento"
+                    value={complementInput}
+                    onChange={(e) => setComplementInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && complementInput.trim()) {
+                        setFormData({
+                          ...formData,
+                          complements: [...formData.complements, complementInput.trim()]
+                        });
+                        setComplementInput('');
+                      }
+                    }}
+                    className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (complementInput.trim()) {
+                        setFormData({
+                          ...formData,
+                          complements: [...formData.complements, complementInput.trim()]
+                        });
+                        setComplementInput('');
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    Agregar
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {formData.complements.map((complement, idx) => (
+                    <div key={idx} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                      <span>{complement}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            complements: formData.complements.filter((_, i) => i !== idx)
+                          });
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        x
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="number"
