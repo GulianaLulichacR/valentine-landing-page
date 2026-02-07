@@ -45,15 +45,23 @@ export default function ImageUpload({ onImageUpload, currentImage }: ImageUpload
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
-      formData.append('cloud_name', cloudName);
+      
+      console.log('[ImageUpload] Iniciando carga con cloud_name:', cloudName);
+      console.log('[ImageUpload] Upload preset:', uploadPreset);
 
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+      console.log('[ImageUpload] URL de carga:', uploadUrl);
+      
+      const response = await fetch(uploadUrl, {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Error al subir la imagen a Cloudinary');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error?.message || `Error ${response.status}: ${response.statusText}`;
+        console.error('[ImageUpload] Cloudinary error:', errorMessage, errorData);
+        throw new Error(`Error al subir la imagen: ${errorMessage}`);
       }
 
       const result = await response.json();
@@ -70,7 +78,9 @@ export default function ImageUpload({ onImageUpload, currentImage }: ImageUpload
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al procesar la imagen';
       setError(errorMessage);
-      console.error('[ImageUpload] Error:', err);
+      console.error('[ImageUpload] Error completo:', err);
+      console.error('[ImageUpload] Cloud Name:', cloudName);
+      console.error('[ImageUpload] Upload Preset:', uploadPreset);
     } finally {
       setIsLoading(false);
     }
