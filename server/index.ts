@@ -6,6 +6,7 @@ import productsRoutes from "./products-routes";
 import uploadRoutes from "./upload-routes";
 import statsRoutes from "./stats-routes";
 import adminRoutes from "./admin-routes";
+import settingsRoutes from "./settings-routes";
 import fileUpload from "express-fileupload";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -36,6 +37,9 @@ app.use("/api/stats", statsRoutes);
 
 // Registrar rutas de administración
 app.use("/api/admin", adminRoutes);
+
+// Registrar rutas de configuración
+app.use("/api/admin", settingsRoutes);
 
 // Rutas para gestión de pedidos
 app.post("/api/orders", async (req, res) => {

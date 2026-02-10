@@ -140,3 +140,20 @@ export const auditLog = mysqlTable("auditLog", {
 
 export type AuditLog = typeof auditLog.$inferSelect;
 export type InsertAuditLog = typeof auditLog.$inferInsert;
+
+/**
+ * Tabla de Configuracion
+ * Almacena configuraciones globales del sitio (WhatsApp, email, etc.)
+ */
+export const settings = mysqlTable("settings", {
+  id: int("id").autoincrement().primaryKey(),
+  whatsappNumber: varchar("whatsappNumber", { length: 20 }).notNull().default("+51999999999"),
+  notificationEmail: varchar("notificationEmail", { length: 255 }).notNull().default("gulianalulichacr048@gmail.com"),
+  siteName: varchar("siteName", { length: 255 }).default("Regala Amor"),
+  siteDescription: text("siteDescription"),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow(),
+});
+
+export type Settings = typeof settings.$inferSelect;
+export type InsertSettings = typeof settings.$inferInsert;

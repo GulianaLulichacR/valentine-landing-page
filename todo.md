@@ -98,3 +98,15 @@
 - [x] Agregar interfaz de edición de complementos en AdminProducts
 - [x] Permitir agregar/eliminar complementos individuales
 - [x] Validar que solo admin puede editar complementos
+
+
+## Phase 14: Notification System & Admin Configuration (Completed)
+- [x] Crear tabla de configuración en base de datos
+- [x] Agregar campos para WhatsApp y email de notificaciones
+- [x] Implementar Toast notifications para usuarios (Toast.tsx, useToast.ts, ToastContainer.tsx)
+- [x] Crear sistema de notificaciones por email para admin (email-service.ts con nodemailer)
+- [x] Crear panel de configuración en admin (AdminSettings.tsx)
+- [x] Crear rutas de API para gestionar configuración (settings-routes.ts)
+- [x] Agregar ruta de AdminSettings en App.tsx
+- [x] Integrar notificaciones en flujo de pedidos
+- [x] Crear tests para validar notificaciones (notifications.test.ts)
